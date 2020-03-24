@@ -14,6 +14,7 @@ from urllib.parse import urljoin, urlparse
 import requests
 
 from .bulk import SFBulkHandler
+from .bulk2 import SFBulkHandler2
 from .exceptions import SalesforceGeneralError
 from .login import SalesforceLogin
 from .util import date_to_iso8601, exception_handler
@@ -191,6 +192,9 @@ class Salesforce:
         self.bulk_url = ('https://{instance}/services/async/{version}/'
                          .format(instance=self.sf_instance,
                                  version=self.sf_version))
+        self.bulk2_url = ('https://{instance}/services/data/v{version}/'
+                          .format(instance=self.sf_instance,
+                                  version=self.sf_version))
 
         self.api_usage = {}
 
@@ -233,6 +237,10 @@ class Salesforce:
         if name == 'bulk':
             # Deal with bulk API functions
             return SFBulkHandler(self.session_id, self.bulk_url, self.proxies,
+                                 self.session)
+        if name == 'bulk2':
+            # Deal with bulk API2.0 functions
+            return SFBulkHandler2(self.session_id, self.bulk2_url, self.proxies,
                                  self.session)
 
         return SFType(
